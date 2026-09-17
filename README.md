@@ -40,7 +40,7 @@ Everything below works in the current version. The list grows with each release 
 
 ### Not there yet
 
-Props and avatars beyond the smileys, spots and doors you can click, several palaces open at once, and painting. They are on the way.
+The [functionality tracker](https://glennox2009.github.io/palacegrid-releases/#features) now includes the broader PalaceV-inspired roadmap: wearable and loose props, a prop bag and editor, animated props, doors and hotspots, room pictures and video, bookmarks, a server directory, multiple connections, painting, richer chat, Iptscrae execution and Cyborg scripts, script editing and debugging, visual room authoring, and operator tools. These are planned areas, not committed release dates.
 
 ## Which file do I need?
 
