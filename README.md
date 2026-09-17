@@ -6,6 +6,8 @@
 
 <p align="center">A desktop client for The Palace chat servers.</p>
 
+<p align="center"><a href="https://glennox2009.github.io/palacegrid-releases/"><b>Explore the website and functionality tracker</b></a></p>
+
 <p align="center">
   <a href="https://github.com/glennox2009/palacegrid-releases/releases/latest"><b>⬇ Download the latest version</b></a>
 </p>
