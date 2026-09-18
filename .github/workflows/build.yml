@@ -1,0 +1,134 @@
+name: Build
+
+# Builds PalaceGrid from the private source repo (glennox2009/PalacegridClient).
+# It runs here because public repos get free Actions minutes; the source is
+# checked out into the runner only, never committed or uploaded here.
+#
+# - A version tag pushed in the source repo sends a `build` dispatch with that
+#   tag, which builds and creates a draft release here with the installers.
+# - Run manually ("Run workflow") with a branch or tag to get the installers as
+#   workflow artifacts only.
+#
+# Secrets in this repo:
+#   SOURCE_TOKEN  fine-grained token, "Contents: Read-only" on PalacegridClient only
+#   TAURI_SIGNING_PRIVATE_KEY, TAURI_SIGNING_PRIVATE_KEY_PASSWORD  updater signing key
+on:
+  repository_dispatch:
+    types: [build]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch or tag of PalacegridClient to build
+        required: true
+        default: main
+
+concurrency:
+  group: build-${{ github.event.client_payload.ref || inputs.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    permissions:
+      # Create the release in this repo.
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macos
+            platform: macos-latest
+            args: --target universal-apple-darwin
+            rust-targets: aarch64-apple-darwin,x86_64-apple-darwin
+            bundle: source/src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+          - name: windows
+            platform: windows-latest
+            args: ""
+            rust-targets: ""
+            bundle: source/src-tauri/target/release/bundle/nsis/*.exe
+
+    runs-on: ${{ matrix.platform }}
+    env:
+      REF: ${{ github.event.client_payload.ref || inputs.ref }}
+      # Compiler warnings quote source lines, and these logs are public.
+      RUSTFLAGS: -Awarnings
+    steps:
+      - name: Check source ref
+        shell: bash
+        run: |
+          if ! [[ "$REF" =~ ^[A-Za-z0-9._/-]+$ ]]; then
+            echo "::error::Not a branch or tag name: $REF"
+            exit 1
+          fi
+
+      - uses: actions/checkout@v7
+        with:
+          repository: glennox2009/PalacegridClient
+          ref: ${{ env.REF }}
+          token: ${{ secrets.SOURCE_TOKEN }}
+          path: source
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: source/package-lock.json
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust-targets }}
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./source/src-tauri -> target"
+
+      - name: Read release notes from CHANGELOG.md
+        id: notes
+        if: startsWith(env.REF, 'v')
+        shell: bash
+        working-directory: source
+        run: |
+          version="${REF#v}"
+          body=$(awk -v v="[$version]" 'index($0, "## " v) == 1 { found = 1; next } found && /^## \[/ { exit } found' CHANGELOG.md)
+          if [ -z "$(echo "$body" | tr -d '[:space:]')" ]; then
+            echo "::error::CHANGELOG.md has no section for $version. Add a '## [$version] - date' section before tagging."
+            exit 1
+          fi
+          {
+            echo 'body<<CHANGELOG_EOF'
+            echo "$body"
+            echo 'CHANGELOG_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Install frontend dependencies
+        working-directory: source
+        run: npm ci
+
+      - name: Build app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Signs the updater bundles; also generates latest.json on releases.
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          projectPath: source
+          args: ${{ matrix.args }}
+          # Only create a release for a version tag.
+          tagName: ${{ startsWith(env.REF, 'v') && env.REF || '' }}
+          releaseCommitish: main
+          releaseName: PalaceGrid ${{ env.REF }}
+          # Also becomes the notes in latest.json, shown in the update dialog.
+          releaseBody: ${{ steps.notes.outputs.body }}
+          releaseDraft: true
+          prerelease: false
+          # GitHub's upload servers sometimes fail mid-release; retry instead of failing the build.
+          retryAttempts: 2
+
+      - name: Upload installer
+        if: ${{ !startsWith(env.REF, 'v') }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: PalaceGrid-${{ matrix.name }}
+          path: ${{ matrix.bundle }}
+          if-no-files-found: error
