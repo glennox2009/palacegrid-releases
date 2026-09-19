@@ -12,9 +12,9 @@ The website resolves the latest published GitHub release automatically and links
 
 - Multiple Palace connections, bookmarks, history and a live server directory.
 - Classic and modern props, a categorized prop bag, loose props and animated-avatar import.
-- Doors, room pictures, video backgrounds, embedded media, chat and painting.
+- Doors, room pictures, video backgrounds, embedded media, chat, translation and painting.
 - Iptscrae room scripts, a personal `cyborg.ipt`, HTTP callbacks and a script debugger.
-- Visual door/spot authoring and operator tools.
+- Flexible room and username display, visual door/spot authoring and operator tools.
 
 ## Installers
 
