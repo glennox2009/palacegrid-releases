@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#0a1015">
+  <meta name="theme-color" content="#15121c">
   <meta name="description" content="Download PalaceGrid, a modern Windows and macOS client for The Palace.">
   <meta property="og:title" content="PalaceGrid — The Palace, connected again">
   <meta property="og:description" content="A modern desktop client with props, Iptscrae, room authoring and multi-palace tabs.">
@@ -21,6 +21,49 @@
     /* Keep the product preview inside the page while giving the monitor enough room. */
     .hero{grid-template-columns:.96fr 1.04fr;gap:54px}
     .monitor{margin:0}
+
+    /* Match the client's dark surfaces and steel-blue controls; let the logo carry the playful colour. */
+    :root{--bg:#15121c;--panel:#1a1622;--panel2:#252832;--line:#3d4653;--text:#e8e6ef;--muted:#8f99a6;--steel:#8eaac6;--light:#abc9e8;--green:#8eaac6;--accent-strong:#2f5f8f;--shadow:0 30px 90px #08060dcc}
+    body{background:radial-gradient(circle at 82% 4%,#3d315f52,transparent 31%),radial-gradient(circle at 5% 34%,#2f5f8f33,transparent 27%),linear-gradient(160deg,#15121c,#171823 54%,#101117);background-attachment:fixed}
+    .nav{height:88px}
+    .brand{gap:13px;font-size:17px;letter-spacing:-.025em}
+    .brand img{width:48px;height:48px;border-radius:15px;box-shadow:0 10px 32px #2f5f8f66,0 0 0 1px #8eaac655}
+    .links{color:#b8c2cd}
+    .links a:hover{color:var(--light)}
+    .nav-cta{border-color:#596675;background:#252832;box-shadow:inset 0 1px #ffffff12}
+    .hero:before{content:"";position:absolute;z-index:-1;width:310px;height:310px;left:4%;top:110px;border-radius:50%;background:#2f5f8f2e;filter:blur(80px)}
+    .hero{position:relative}
+    .tag{border-color:#536273;background:#1b242d;color:#c4d9ed}
+    .tag i{background:var(--steel);box-shadow:0 0 16px #8eaac6cc}
+    h1 span{color:transparent;background:linear-gradient(92deg,var(--light),var(--steel) 55%,#8198b2);background-clip:text;-webkit-background-clip:text}
+    .lead{color:#b6c2ce}
+    .button{border-color:#536273;background:#1c242c}
+    .button:hover{border-color:var(--light);background:#273442;box-shadow:0 10px 30px #2f5f8f2e}
+    .button.primary{border-color:#abc9e8;background:linear-gradient(135deg,#c4d9ed 0%,#8eaac6 52%,#6687a5 100%);color:#10151b;box-shadow:0 14px 38px #2f5f8f55}
+    .meta{color:#8795a3}.meta strong{color:var(--light)}
+    .app:before{background:linear-gradient(135deg,#4f436c59,#2f5f8f66);filter:blur(92px)}
+    .monitor-screen{border-color:#596675;background:linear-gradient(145deg,#383d48,#151820 72%);box-shadow:var(--shadow),inset 0 1px #ffffff24}
+    .monitor-screen:after{background:var(--steel);box-shadow:0 0 9px var(--steel)}
+    .monitor-screen img{border-color:#0a0718;filter:saturate(.92) brightness(.92)}
+    .monitor-neck{background:linear-gradient(90deg,#181b22,#536273 48%,#20242c)}
+    .monitor-base{border-color:#596675;background:linear-gradient(#657181,#252832 70%)}
+    .eyebrow{color:var(--light)}
+    .stats span{border-color:#465260;background:#8eaac60b;color:#aab6c0}.stats strong{color:var(--light)}
+    .filter{border-color:#465260;background:#171d24;color:#aab6c0}
+    .filter:hover,.filter.active{border-color:#8eaac6;background:#273442;color:#fff}
+    .feature{border-color:#3d4653;background:linear-gradient(145deg,#20262e,#15191f);box-shadow:inset 0 1px #ffffff08}
+    .feature:hover{border-color:#8eaac6;box-shadow:0 15px 38px #080b0f80,inset 0 1px #ffffff0d}
+    .feature-icon{background:linear-gradient(135deg,#455a70,#2f5f8f);color:#e9f4ff}
+    .feature p,.script-copy p{color:var(--muted)}.feature small{color:var(--light)}
+    .script-copy,.code{border-color:#465260;background:#13181e}
+    .ticks span{background:#202a33;color:#c2ccd6}.ticks span:before{color:var(--light)}
+    .code{color:#aab6c0}.code .key{color:#abc9e8}.code .str{color:#91c9d8}.code .comment{color:#71808e}.cursor{background:var(--light)}
+    .download-box{border-color:#657181;background:radial-gradient(circle at 90% 5%,#8eaac617,transparent 34%),linear-gradient(135deg,#273442,#151b22 66%);box-shadow:0 22px 65px #080b0f99}
+    .release-state{border-color:#657181;background:#273442;color:#cfe2f5}
+    .download{border-color:#465260;background:#13181e}
+    .details{border-color:#465260;color:#aab6c0}.details summary{color:#dce6ef}.details code{background:#0e1216;color:#abc9e8}
+    .release-row{color:#91a0ad}.release-row a,footer a{color:#abc9e8}
+    footer{border-color:#323b46;color:#7f8b96}
   </style>
 </head>
 <body>
