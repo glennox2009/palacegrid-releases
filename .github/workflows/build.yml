@@ -121,7 +121,9 @@ jobs:
           # Also becomes the notes in latest.json, shown in the update dialog.
           releaseBody: ${{ steps.notes.outputs.body }}
           releaseDraft: true
-          prerelease: false
+          # A tag with a suffix, like v0.28.0-dev.1, is a pre-release: only the
+          # Develop update channel gets it. Plain v0.28.0 goes to Beta as well.
+          prerelease: ${{ contains(env.REF, '-') }}
           # GitHub's upload servers sometimes fail mid-release; retry instead of failing the build.
           retryAttempts: 2
 
