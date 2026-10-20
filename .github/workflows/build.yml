@@ -6,8 +6,8 @@ name: Build
 #
 # - A version tag pushed in the source repo sends a `build` dispatch with that
 #   tag, which builds and creates a draft release here with the installers.
-# - Run manually ("Run workflow") with a branch or tag to get the installers as
-#   workflow artifacts only.
+# - Run manually ("Run workflow") with a branch for installer artifacts, or
+#   with a version tag to create/update its draft release.
 #
 # Secrets in this repo:
 #   SOURCE_TOKEN  fine-grained token, "Contents: Read-only" on PalacegridClient only
@@ -21,6 +21,17 @@ on:
         description: Branch or tag of PalacegridClient to build
         required: true
         default: main
+      macos_runner:
+        description: macOS runner image (use macos-15 when the latest image is busy)
+        type: choice
+        options:
+          - macos-latest
+          - macos-15
+        default: macos-latest
+      macos_only:
+        description: Build only macOS, preserving any existing Windows release assets
+        type: boolean
+        default: false
 
 concurrency:
   group: build-${{ github.event.client_payload.ref || inputs.ref }}
@@ -46,7 +57,7 @@ jobs:
             rust-targets: ""
             bundle: source/src-tauri/target/release/bundle/nsis/*.exe
 
-    runs-on: ${{ matrix.platform }}
+    runs-on: ${{ matrix.name == 'macos' && inputs.macos_runner || matrix.platform }}
     env:
       REF: ${{ github.event.client_payload.ref || inputs.ref }}
       # Compiler warnings quote source lines, and these logs are public.
@@ -105,6 +116,7 @@ jobs:
         run: npm ci
 
       - name: Build app
+        if: matrix.name != 'windows' || !inputs.macos_only
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -128,7 +140,7 @@ jobs:
           retryAttempts: 2
 
       - name: Upload installer
-        if: ${{ !startsWith(env.REF, 'v') }}
+        if: ${{ !startsWith(env.REF, 'v') && (matrix.name != 'windows' || !inputs.macos_only) }}
         uses: actions/upload-artifact@v7
         with:
           name: PalaceGrid-${{ matrix.name }}
