@@ -4,7 +4,7 @@
 
 A modern desktop client for The Palace on Windows and macOS.
 
-**[Download PalaceGrid and explore the current features](https://glennox2009.github.io/palacegrid-releases/)**
+**[Download PalaceGrid and explore the current features](https://palacegrid.com/)**
 
 The website resolves the latest published GitHub release automatically and links directly to the correct installer.
 
